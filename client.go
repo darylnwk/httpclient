@@ -2,6 +2,7 @@ package httpclient
 
 import (
 	"fmt"
+	"net"
 	"net/http"
 	"time"
 
@@ -45,6 +46,7 @@ func NewClient(opts ...Option) *Client {
 func (client *Client) Do(request *http.Request) (*http.Response, error) {
 	var (
 		response *http.Response
+		timeout  bool
 
 		success, errs = client.Retryer.Do(func() error {
 			var err error
@@ -69,7 +71,15 @@ func (client *Client) Do(request *http.Request) (*http.Response, error) {
 	)
 
 	if !success {
-		return response, fmt.Errorf("httpclient: request occurred with errors: %s", errs)
+		// Check if last error is a timeout error
+		if err, ok := errs[len(errs)-1].(net.Error); ok && err.Timeout() {
+			timeout = true
+		}
+
+		return response, &httpError{
+			err:     fmt.Sprintf("httpclient: request occurred with errors: %s", errs),
+			timeout: timeout,
+		}
 	}
 
 	return response, nil
