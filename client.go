@@ -15,8 +15,10 @@ const (
 
 // Client defines a HTTP client
 type Client struct {
-	Client  *http.Client
-	Retryer retry.Retryer
+	Client    *http.Client
+	Retryer   retry.Retryer
+	Prehooks  []Prehook
+	Posthooks []Posthook
 }
 
 // NewClient initialises a new `Client`
@@ -28,6 +30,8 @@ func NewClient(opts ...Option) *Client {
 		Retryer: retry.Retryer{
 			Attempts: defaultRetryAttempts,
 		},
+		Prehooks:  []Prehook{},
+		Posthooks: []Posthook{},
 	}
 
 	for _, opt := range opts {
@@ -41,20 +45,28 @@ func NewClient(opts ...Option) *Client {
 func (client *Client) Do(request *http.Request) (*http.Response, error) {
 	var (
 		response *http.Response
+
+		success, errs = client.Retryer.Do(func() error {
+			var err error
+
+			for _, prehook := range client.Prehooks {
+				prehook(request)
+			}
+
+			response, err = client.Client.Do(request)
+
+			for _, posthook := range client.Posthooks {
+				posthook(response, err)
+			}
+
+			// Retry only on 5xx status codes
+			if response != nil && response.StatusCode >= http.StatusInternalServerError {
+				return fmt.Errorf("retrying on %s", response.Status)
+			}
+
+			return err
+		})
 	)
-
-	success, errs := client.Retryer.Do(func() error {
-		var err error
-
-		response, err = client.Client.Do(request)
-
-		// Retry only on 5xx status codes
-		if response != nil && response.StatusCode >= http.StatusInternalServerError {
-			return fmt.Errorf("retrying on %s", response.Status)
-		}
-
-		return err
-	})
 
 	if !success {
 		return response, fmt.Errorf("httpclient: request occurred with errors: %s", errs)

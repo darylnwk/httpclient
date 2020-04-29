@@ -88,3 +88,26 @@ func TestClient_DoWithInternalServerError(t *testing.T) {
 	assert.EqualError(t, err, "httpclient: request occurred with errors: retrying on 500 Internal Server Error; retrying on 500 Internal Server Error")
 	assert.Equal(t, http.StatusInternalServerError, response.StatusCode)
 }
+
+func TestClient_DoWithHook(t *testing.T) {
+	var (
+		url = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(http.StatusOK)
+		})).URL
+		client = httpclient.NewClient(
+			httpclient.OptionAttempts(2),
+			httpclient.OptionAddPrehook(func(req *http.Request) {
+				assert.Equal(t, url, req.URL.String())
+			}),
+			httpclient.OptionAddPosthook(func(resp *http.Response, err error) {
+				assert.NoError(t, err)
+				assert.Equal(t, http.StatusOK, resp.StatusCode)
+			}),
+		)
+		request, _    = http.NewRequest(http.MethodPost, url, strings.NewReader(`{"foo": "bar"}`))
+		response, err = client.Do(request)
+	)
+
+	assert.NoError(t, err)
+	assert.Equal(t, http.StatusOK, response.StatusCode)
+}

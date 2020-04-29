@@ -49,3 +49,17 @@ func OptionJitter(fn func(backoff time.Duration) time.Duration) Option {
 		client.Retryer.Jitter = fn
 	}
 }
+
+// OptionAddPrehook adds a prehook to `Client`
+func OptionAddPrehook(prehook func(request *http.Request)) Option {
+	return func(client *Client) {
+		client.Prehooks = append(client.Prehooks, prehook)
+	}
+}
+
+// OptionAddPosthook adds a posthook to `Client`
+func OptionAddPosthook(posthook func(response *http.Response, err error)) Option {
+	return func(client *Client) {
+		client.Posthooks = append(client.Posthooks, posthook)
+	}
+}
