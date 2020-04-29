@@ -69,7 +69,7 @@ func TestClient_DoHTTPDoRequestError(t *testing.T) {
 		response, err = client.Do(request)
 	)
 
-	assert.EqualError(t, err, "httpclient: request occurred with errors: Post : unsupported protocol scheme \"\"")
+	assert.EqualError(t, err, "httpclient: request occurred with errors: Post \"\": unsupported protocol scheme \"\"")
 	assert.Nil(t, response)
 }
 
