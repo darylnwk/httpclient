@@ -1,5 +1,5 @@
-github.com/darylnwk/retry v1.2.0 h1:Yr0y40uiNJbKidrqAe6FnlOnBmnXVttzgybIEkjeg5g=
-github.com/darylnwk/retry v1.2.0/go.mod h1:Hq4zmJmSATvzBzmaxJeQdCuXvmREy9hZISadckx683U=
+github.com/darylnwk/retry v1.3.0 h1:XxcfKkec2AKWqrNHX6nLbwvpSQiBkEX11KkKNrafsVM=
+github.com/darylnwk/retry v1.3.0/go.mod h1:Hq4zmJmSATvzBzmaxJeQdCuXvmREy9hZISadckx683U=
 github.com/davecgh/go-spew v1.1.0 h1:ZDRjVQ15GmhC3fiQ8ni8+OwkZQO4DARzQgrnXU1Liz8=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=

@@ -35,3 +35,10 @@ func OptionBackoff(fn func(n uint, delay time.Duration) time.Duration) Option {
 		client.Retryer.Backoff = fn
 	}
 }
+
+// OptionJitter sets `Client` retry jitter
+func OptionJitter(fn func(backoff time.Duration) time.Duration) Option {
+	return func(client *Client) {
+		client.Retryer.Jitter = fn
+	}
+}

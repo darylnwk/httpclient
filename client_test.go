@@ -8,9 +8,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/darylnwk/httpclient"
 	"github.com/darylnwk/retry"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/darylnwk/httpclient"
 )
 
 func TestClient_NewClient(t *testing.T) {
@@ -36,6 +37,7 @@ func TestClient_NewClient(t *testing.T) {
 		httpclient.OptionTimeout(10*time.Second),
 		httpclient.OptionAttempts(3),
 		httpclient.OptionBackoff(retry.NoBackoff),
+		httpclient.OptionJitter(retry.NoJitter),
 	)
 
 	assert.Equal(t, 10*time.Second, client.Client.Timeout)
