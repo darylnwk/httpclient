@@ -8,6 +8,13 @@ import (
 // Option defines `Client` option
 type Option func(*Client)
 
+// OptionDelay sets HTTP client delay between attempts
+func OptionDelay(delay time.Duration) Option {
+	return func(client *Client) {
+		client.Retryer.Delay = delay
+	}
+}
+
 // OptionTimeout sets HTTP client timeout
 func OptionTimeout(timeout time.Duration) Option {
 	return func(client *Client) {

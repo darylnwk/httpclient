@@ -36,6 +36,7 @@ func TestClient_NewClient(t *testing.T) {
 	client = httpclient.NewClient(
 		httpclient.OptionTimeout(10*time.Second),
 		httpclient.OptionAttempts(3),
+		httpclient.OptionDelay(time.Second),
 		httpclient.OptionBackoff(retry.NoBackoff),
 		httpclient.OptionJitter(retry.NoJitter),
 	)
